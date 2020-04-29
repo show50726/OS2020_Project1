@@ -36,6 +36,10 @@ int execute(process p){
 }
 
 void start_scheduling(process* processes, int n, int p){
+	queue q;
+	q.start = 0;
+	q.last = 0;
+	memset(q._q, 0, sizeof(q._q));
 	int ctime = 0, id = -1, nfinish = 0, last = 0;
 	
 	cpu_set_t mask, mask1;
@@ -69,11 +73,12 @@ void start_scheduling(process* processes, int n, int p){
 				//printf("%d %d", ctime, processes[i].rt);
 				int p = execute(processes[i]);
 				processes[i].pid = p;
+				push(&q, i);
 				sched_setscheduler(p, SCHED_IDLE, &param);
 			}			
 		}
 		
-		int next = get_next(processes, n, p, &id, &ctime, &last);
+		int next = get_next(processes, n, p, &id, &ctime, &last, &q);
 		if(next!=-1&&id!=next){
 			//printf("%d %d\n", ctime, next);
 			sched_setscheduler(processes[next].pid, SCHED_OTHER, &param);
@@ -108,6 +113,7 @@ int main(){
 	}	
 	
 	int p = -1;
+	
 	if(strcmp(policy, "FIFO")==0){
 		p = 0;
 	}

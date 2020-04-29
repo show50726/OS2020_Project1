@@ -18,4 +18,10 @@ typedef struct process{
 	pid_t pid;
 } process;
 
-int get_next(process* processes, int n, int p, int *id, int *ctime, int* last);
+typedef struct queue{
+	int start;
+	int last;
+	int _q[1010];
+}queue;
+
+int get_next(process* processes, int n, int p, int *id, int *ctime, int* last, queue* q);
